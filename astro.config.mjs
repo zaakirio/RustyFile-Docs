@@ -3,8 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
-	site: 'https://zaakirio.github.io',
-	base: '/RustyFile-Docs',
+	site: 'https://rustyfile.io',
 	integrations: [
 		starlight({
 			title: 'RustyFile',
