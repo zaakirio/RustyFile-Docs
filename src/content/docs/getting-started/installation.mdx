@@ -1,0 +1,91 @@
+---
+title: Installation
+description: Install RustyFile via binary download, Docker, or build from source.
+---
+
+import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+
+## Choose your method
+
+<Tabs syncKey="install">
+  <TabItem label="Binary" icon="linux">
+    Download the latest release for your platform:
+
+    | Platform | Architecture | Download |
+    |----------|-------------|----------|
+    | Linux | x86_64 | `rustyfile-linux-amd64` |
+    | Linux | ARM64 | `rustyfile-linux-arm64` |
+    | macOS | Intel | `rustyfile-darwin-amd64` |
+    | macOS | Apple Silicon | `rustyfile-darwin-arm64` |
+
+    ```bash
+    chmod +x rustyfile-linux-amd64
+    mv rustyfile-linux-amd64 /usr/local/bin/rustyfile
+    ```
+  </TabItem>
+
+  <TabItem label="Docker" icon="seti:docker">
+    ```bash
+    docker run -d \
+      --name rustyfile \
+      -p 8080:8080 \
+      -v /your/files:/data \
+      -v rustyfile-config:/config \
+      rustyfile/rustyfile
+    ```
+
+    Or with Docker Compose:
+
+    ```yaml title="docker-compose.yml"
+    services:
+      rustyfile:
+        image: rustyfile/rustyfile
+        ports:
+          - "8080:8080"
+        volumes:
+          - /your/files:/data
+          - rustyfile-config:/config
+        restart: unless-stopped
+
+    volumes:
+      rustyfile-config:
+    ```
+  </TabItem>
+
+  <TabItem label="From Source" icon="seti:rust">
+    **Prerequisites:** Rust 1.80+, optionally Node 22+ and pnpm for the frontend.
+
+    <Steps>
+    1. Clone the repository
+
+       ```bash
+       git clone https://github.com/zaakir/rustyfile.git
+       cd rustyfile
+       ```
+
+    2. Build the frontend (optional — embedded by default)
+
+       ```bash
+       cd frontend && pnpm install && pnpm build && cd ..
+       ```
+
+    3. Build the binary
+
+       ```bash
+       cargo build --release
+       ```
+
+    4. The binary is at `target/release/rustyfile`
+    </Steps>
+
+    :::tip
+    The `embed-frontend` Cargo feature is enabled by default. It bakes the React frontend into the binary so you get a single self-contained file.
+    :::
+  </TabItem>
+</Tabs>
+
+## Requirements
+
+- **Runtime:** None. The binary is fully self-contained (SQLite is bundled).
+- **Optional:** FFmpeg + ffprobe on `PATH` for HLS video transcoding.
+- **Disk:** Database and caches are stored in `--data-dir` (default: `./rustyfile-data`).

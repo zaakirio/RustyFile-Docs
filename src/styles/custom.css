@@ -1,0 +1,42 @@
+/*
+ * RustyFile Design Tokens — "The Industrial Monolith"
+ * Derived from the RustyFile frontend design system.
+ * Dark-first, sharp edges, Space Grotesk + JetBrains Mono.
+ */
+
+:root {
+	/* Accent: RustyFile orange */
+	--sl-color-accent-low: #1c0f02;
+	--sl-color-accent: #e45301;
+	--sl-color-accent-high: #ffb599;
+
+	/* Grays: match RustyFile surface hierarchy */
+	--sl-color-gray-1: #f2f2f2; /* text-main */
+	--sl-color-gray-2: #a98a7e; /* outline */
+	--sl-color-gray-3: #7a7a7a; /* muted */
+	--sl-color-gray-4: #353534; /* surface-bright */
+	--sl-color-gray-5: #2c2c2c; /* borders */
+	--sl-color-gray-6: #141414; /* surface */
+	--sl-color-gray-7: #090909; /* background */
+
+	/* Typography: Space Grotesk + JetBrains Mono */
+	--sl-font: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--sl-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: #fff0e6;
+	--sl-color-accent: #c44800;
+	--sl-color-accent-high: #3d1600;
+}
+
+/* Sharp corners — no border radius, matching the brutalist design system */
+:root {
+	--sl-border-radius: 0px;
+}
+
+/* Logo sizing in the nav */
+.site-title img {
+	height: 1.75rem;
+	width: auto;
+}

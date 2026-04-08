@@ -1,0 +1,103 @@
+---
+title: Architecture Overview
+description: High-level system architecture of RustyFile — how the backend, frontend, and database fit together.
+---
+
+import { FileTree } from '@astrojs/starlight/components';
+
+## System diagram
+
+```
+┌─────────────┐     HTTPS      ┌───────────────┐     HTTP      ┌──────────────────┐
+│   Browser    │ ──────────────→│ Reverse Proxy │ ────────────→│    RustyFile      │
+│  (React SPA) │ ←──────────────│ (nginx/Caddy) │ ←────────────│   (Axum/Tokio)   │
+└─────────────┘                └───────────────┘              └──────┬───────────┘
+                                                                     │
+                                           ┌─────────────────────────┼─────────────┐
+                                           │                         │             │
+                                      ┌────▼────┐            ┌──────▼──┐    ┌─────▼─────┐
+                                      │ SQLite  │            │  Files  │    │  FFmpeg   │
+                                      │ (WAL)   │            │  (disk) │    │ (optional)│
+                                      └─────────┘            └─────────┘    └───────────┘
+```
+
+## Tech stack
+
+| Layer | Technology |
+|-------|-----------|
+| HTTP framework | Axum 0.8 |
+| Async runtime | Tokio (multi-threaded) |
+| Database | SQLite (bundled via rusqlite, WAL mode) |
+| Connection pool | deadpool-sqlite (4 connections) |
+| Auth | JWT HS256 + Argon2id |
+| Config | Figment (TOML + env + defaults) + Clap (CLI) |
+| Logging | tracing + tracing-subscriber (pretty or JSON) |
+| Frontend | React 19 + TypeScript + Tailwind CSS 4 |
+| Build | Cargo (Rust) + Vite (frontend) |
+| Frontend embedding | rust-embed (optional, default on) |
+
+## Project structure
+
+<FileTree>
+- src/
+  - main.rs — Entry point, startup wiring
+  - lib.rs — Module declarations
+  - config.rs — Layered configuration
+  - state.rs — Shared AppState
+  - error.rs — Unified error type
+  - frontend.rs — Embedded SPA serving
+  - api/
+    - mod.rs — Router + middleware stack
+    - auth.rs — Login, logout, refresh
+    - setup.rs — First-run admin creation
+    - files.rs — Browse, create, delete, rename
+    - download.rs — Range-request file streaming
+    - tus.rs — TUS 1.0 upload protocol
+    - thumbs.rs — Image thumbnails
+    - hls.rs — HLS playlist + segments
+    - health.rs — Health check
+    - middleware/
+      - auth.rs — JWT validation middleware
+  - db/
+    - mod.rs — Pool, migrations, interact helper
+    - user_repo.rs — User CRUD + password hashing
+  - services/
+    - file_ops.rs — Path safety, listing, atomic writes
+    - cache.rs — Directory listing cache (moka)
+    - thumbnail.rs — Image resize + disk cache
+    - transcoder.rs — FFmpeg HLS transcoder
+- frontend/
+  - src/
+    - App.tsx — Router, auth guard
+    - api/client.ts — Fetch wrapper, token management
+    - hooks/ — useAuth, useFiles, useTusUpload, useDragDrop
+    - pages/ — LoginPage, BrowserPage, EditorPage, PlayerPage
+    - components/ — Layout, FileList, UploadManager, VideoControls
+    - lib/ — Types, path utils, formatting
+- migrations/
+  - V1__initial_schema.sql
+  - V2__tus_and_cache.sql
+- Cargo.toml
+- Dockerfile
+- Makefile
+</FileTree>
+
+## Request lifecycle
+
+1. Request arrives at Axum router
+2. Tower middleware stack applies: CORS, compression (gzip/brotli), security headers, tracing, timeout, body limit
+3. For protected routes, `require_auth` middleware extracts JWT (Bearer header or cookie), validates signature and expiry, looks up user in SQLite, injects `User` as an Axum extension
+4. Handler executes business logic (file ops, uploads, etc.)
+5. Response flows back through middleware (compression, tracing span close)
+
+## Shared state
+
+All handlers share an `AppState` struct containing:
+
+- SQLite connection pool
+- Canonical root path
+- Configuration values
+- Directory listing cache (moka)
+- HLS source mapping (DashMap)
+- Thumbnail and HLS semaphores
+- Filesystem watcher handle

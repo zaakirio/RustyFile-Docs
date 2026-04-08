@@ -1,0 +1,99 @@
+---
+title: Reverse Proxy
+description: Configure nginx, Caddy, or Traefik in front of RustyFile for TLS and production use.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+RustyFile does not terminate TLS itself. Use a reverse proxy for HTTPS in production.
+
+<Tabs>
+  <TabItem label="nginx">
+    ```nginx title="/etc/nginx/sites-available/rustyfile"
+    server {
+        listen 443 ssl http2;
+        server_name files.example.com;
+
+        ssl_certificate     /etc/letsencrypt/live/files.example.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/files.example.com/privkey.pem;
+
+        # Important for large file uploads
+        client_max_body_size 10G;
+
+        location / {
+            proxy_pass http://127.0.0.1:8080;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # WebSocket support (if needed in future)
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+    }
+
+    server {
+        listen 80;
+        server_name files.example.com;
+        return 301 https://$server_name$request_uri;
+    }
+    ```
+
+    :::caution
+    Set `client_max_body_size` high enough for your largest uploads. TUS uploads are chunked (5 MB), but non-TUS `PUT` uploads send the entire file at once.
+    :::
+  </TabItem>
+
+  <TabItem label="Caddy">
+    ```txt title="Caddyfile"
+    files.example.com {
+        reverse_proxy localhost:8080
+    }
+    ```
+
+    Caddy handles TLS automatically via Let's Encrypt. No additional configuration needed.
+  </TabItem>
+
+  <TabItem label="Traefik">
+    ```yaml title="docker-compose.yml"
+    services:
+      rustyfile:
+        image: rustyfile/rustyfile
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.rustyfile.rule=Host(`files.example.com`)"
+          - "traefik.http.routers.rustyfile.tls=true"
+          - "traefik.http.routers.rustyfile.tls.certresolver=letsencrypt"
+          - "traefik.http.services.rustyfile.loadbalancer.server.port=8080"
+        volumes:
+          - /your/files:/data
+          - rustyfile-config:/config
+
+    volumes:
+      rustyfile-config:
+    ```
+  </TabItem>
+</Tabs>
+
+## Trusted proxies
+
+By default, RustyFile trusts all `X-Forwarded-For` headers. In production, restrict to your proxy's IP:
+
+```bash
+rustyfile --root /data \
+  RUSTYFILE_TRUSTED_PROXIES="127.0.0.1,10.0.0.1"
+```
+
+This ensures the rate limiter and logging use the real client IP, not the proxy's.
+
+## CORS
+
+If the frontend is served from a different origin (e.g., during development), configure allowed origins:
+
+```bash
+RUSTYFILE_CORS_ORIGINS="https://files.example.com,http://localhost:5173"
+```
+
+Default is `*` (allow all origins).
