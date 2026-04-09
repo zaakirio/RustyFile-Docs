@@ -92,6 +92,30 @@ CREATE TABLE shares (
 The `shares` table exists in the schema but has no API implementation yet. It's designed for a future file sharing feature with optional password protection, expiry, and download limits.
 :::
 
+### `file_index` table
+
+Powers full-text filename search via SQLite FTS5.
+
+```sql
+CREATE TABLE file_index (
+    path        TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    is_dir      INTEGER NOT NULL DEFAULT 0,
+    size        INTEGER NOT NULL DEFAULT 0,
+    modified    TEXT NOT NULL,
+    mime_type   TEXT,
+    extension   TEXT,
+    indexed_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE INDEX idx_file_index_name ON file_index(name COLLATE NOCASE);
+CREATE INDEX idx_file_index_extension ON file_index(extension);
+CREATE INDEX idx_file_index_size ON file_index(size);
+CREATE INDEX idx_file_index_modified ON file_index(modified);
+```
+
+The index is fully rebuilt on startup and incrementally updated as files change via filesystem watcher events (500ms debounce). Extensions are normalized to lowercase at index time. LIKE metacharacters (`%`, `_`, `\`) are escaped for literal substring matching.
+
 ## Migrations
 
 Migrations are SQL files in the `migrations/` directory, applied in order at startup:
@@ -100,6 +124,7 @@ Migrations are SQL files in the `migrations/` directory, applied in order at sta
 |-----------|-------------|
 | V1 | Initial schema: settings, users, shares, uploads |
 | V2 | Adds `expires_at` and `completed` columns to uploads, partial index |
+| V3 | Adds `file_index` table with indexes for search |
 
 The current schema version is tracked in `settings.schema_version` and compared against available migrations on startup.
 

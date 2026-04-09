@@ -166,6 +166,55 @@ curl -H "Range: bytes=0-1023" \
 
 Returns `206 Partial Content` with `Content-Range` header.
 
+## Search
+
+```http
+GET /api/fs/search
+```
+
+Full-text filename search across the indexed filesystem. Powered by SQLite FTS5.
+
+**Query parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `q` | string | *(required)* | Search term |
+| `type` | string | — | Filter by type: `file`, `dir`, `image`, `video`, `audio`, `document` |
+| `min_size` | integer | — | Minimum file size in bytes |
+| `max_size` | integer | — | Maximum file size in bytes |
+| `after` | string | — | Modified after (ISO 8601) |
+| `before` | string | — | Modified before (ISO 8601) |
+| `path` | string | — | Scope results to a subdirectory |
+| `limit` | integer | `50` | Results per page |
+| `offset` | integer | `0` | Pagination offset |
+
+**Response** `200`:
+```json
+{
+  "results": [
+    {
+      "name": "readme.md",
+      "path": "documents/readme.md",
+      "is_dir": false,
+      "size": 1024,
+      "modified": "2024-01-15T10:30:00Z",
+      "mime_type": "text/markdown",
+      "extension": "md"
+    }
+  ]
+}
+```
+
+**Example:**
+```bash
+curl "http://localhost:8080/api/fs/search?q=config&type=file&min_size=100&limit=10" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+The search index is built on startup and kept in sync via filesystem watcher events with 500ms debounce.
+
+---
+
 ## Path safety
 
 All paths are validated server-side:

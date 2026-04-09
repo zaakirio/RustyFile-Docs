@@ -58,6 +58,24 @@ Text content is returned inline for files up to **5 MB**. Larger text files can 
 
 Saves are **atomic** — a temp file is written and renamed, preventing partial writes on crash.
 
+## Search
+
+The file browser includes a search bar for finding files by name across the entire filesystem.
+
+- **Full-text search** powered by SQLite FTS5
+- **Type filtering** — narrow results by: `file`, `dir`, `image`, `video`, `audio`, `document`
+- **Size and date filters** — filter by `min_size`, `max_size`, `after`, `before`
+- **Path scoping** — limit search to a subdirectory
+- **Debounced input** — queries fire after a short delay to avoid excessive requests
+
+```bash
+# API example — search for "readme" files
+curl "http://localhost:8080/api/fs/search?q=readme&type=file&limit=20" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+The search index is built in the background on startup and updated incrementally as files change via the filesystem watcher.
+
 ## Breadcrumbs
 
 The path bar shows clickable breadcrumb segments. Click any segment to navigate up the directory tree.

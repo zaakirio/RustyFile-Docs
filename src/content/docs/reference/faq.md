@@ -97,6 +97,22 @@ It's generated randomly (128-bit) at first run and stored in the SQLite database
 
 ---
 
+## Search
+
+### How does search work?
+
+RustyFile uses SQLite FTS5 for full-text filename search. The search index is built in the background on startup and kept in sync via filesystem watcher events (500ms debounce).
+
+### Can I search by file content?
+
+No. Search is name-based only — it matches filenames, not file contents.
+
+### Can I filter search results?
+
+Yes. You can filter by type (`file`, `dir`, `image`, `video`, `audio`, `document`), size range (`min_size`, `max_size`), date range (`after`, `before`), and scope to a subdirectory (`path`).
+
+---
+
 ## Performance
 
 ### How much memory does it use?

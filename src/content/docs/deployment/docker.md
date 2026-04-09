@@ -8,7 +8,7 @@ description: Run RustyFile with Docker or Docker Compose.
 ```bash
 docker run -d \
   --name rustyfile \
-  -p 8080:8080 \
+  -p 8080:80 \
   -v /your/files:/data \
   -v rustyfile-config:/config \
   rustyfile/rustyfile
@@ -27,8 +27,7 @@ Override any configuration via environment:
 
 ```bash
 docker run -d \
-  -p 3000:3000 \
-  -e RUSTYFILE_PORT=3000 \
+  -p 3000:80 \
   -e RUSTYFILE_LOG_FORMAT=json \
   -e RUSTYFILE_JWT_EXPIRY_HOURS=8 \
   -v /your/files:/data \
@@ -44,7 +43,7 @@ services:
     image: rustyfile/rustyfile
     container_name: rustyfile
     ports:
-      - "8080:8080"
+      - "8080:80"
     volumes:
       - /your/files:/data
       - rustyfile-config:/config
@@ -76,7 +75,7 @@ Checked every 30 seconds with a 5-second timeout.
 - **Base:** Alpine 3.21
 - **Size:** ~15-20 MB
 - **User:** Runs as non-root
-- **FFmpeg:** Not included by default. Mount or install if you need HLS transcoding.
+- **FFmpeg:** Included in the image for HLS transcoding support.
 
 ## Building locally
 

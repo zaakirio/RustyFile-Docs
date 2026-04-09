@@ -11,7 +11,7 @@ hero:
       icon: right-arrow
       variant: primary
     - text: View on GitHub
-      link: https://github.com/zaakir/rustyfile
+      link: https://github.com/zaakirio/rustyfile
       icon: external
       variant: minimal
 ---
@@ -36,6 +36,9 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="Secure by Default" icon="approve-check-circle">
     Path traversal prevention, JWT + Argon2id auth, rate-limited login, constant-time password checks, CSP headers, and atomic file writes.
   </Card>
+  <Card title="Full-Text Search" icon="magnifier">
+    Find files instantly with SQLite FTS5-powered search. Filter by type, size, date, and path. Index stays in sync via filesystem watcher.
+  </Card>
   <Card title="Zero Config" icon="setting">
     Launch with a single command. First-run setup wizard creates your admin account. Configure via CLI flags, environment variables, or TOML.
   </Card>
@@ -48,7 +51,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 rustyfile --root /path/to/files
 
 # Or with Docker
-docker run -d -p 8080:8080 -v /your/files:/data rustyfile/rustyfile
+docker run -d -p 8080:80 -v /your/files:/data rustyfile/rustyfile
 ```
 
 Visit `http://localhost:8080` and create your admin account during the 5-minute setup window.

@@ -12,7 +12,7 @@ export default defineConfig({
 			},
 			favicon: '/favicon.svg',
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/zaakir/rustyfile' },
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/zaakirio/rustyfile' },
 			],
 			customCss: [
 				'@fontsource/space-grotesk/400.css',

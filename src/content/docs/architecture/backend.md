@@ -30,6 +30,7 @@ Business logic lives here, separate from HTTP concerns:
 - **cache** — `DirCache` wrapper around moka's async cache with filesystem watcher integration
 - **thumbnail** — Decode, resize (Lanczos3 via fast_image_resize), encode to JPEG, disk-cache
 - **transcoder** — FFmpeg subprocess management, segment generation, disk caching
+- **search_index** — SQLite FTS5-backed full-text filename search. Full reindex on startup, incremental updates via filesystem watcher notifications. Supports type/size/date filtering and path scoping
 
 ### Database layer (`src/db/`)
 

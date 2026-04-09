@@ -25,22 +25,22 @@ Configuration is layered (highest priority first):
 | cache_dir | `--cache-dir` | `RUSTYFILE_CACHE_DIR` | `{data_dir}/cache` | Thumbnails, HLS segments, TUS temp files |
 | log_level | `--log-level` | `RUSTYFILE_LOG_LEVEL` | `info` | `debug`, `info`, `warn`, `error` |
 | log_format | `--log-format` | `RUSTYFILE_LOG_FORMAT` | `pretty` | `pretty` or `json` |
-| jwt_expiry_hours | — | `RUSTYFILE_JWT_EXPIRY_HOURS` | `2` | JWT token lifetime in hours |
-| min_password_length | — | `RUSTYFILE_MIN_PASSWORD_LENGTH` | `10` | Minimum password length |
-| max_password_length | — | `RUSTYFILE_MAX_PASSWORD_LENGTH` | `128` | Maximum password length (Argon2 DoS guard) |
-| setup_timeout_minutes | — | `RUSTYFILE_SETUP_TIMEOUT_MINUTES` | `5` | First-run setup window duration |
-| cors_origins | — | `RUSTYFILE_CORS_ORIGINS` | `*` | Comma-separated allowed origins |
-| max_upload_bytes | — | `RUSTYFILE_MAX_UPLOAD_BYTES` | `52428800` | Non-TUS upload body limit (50 MB) |
-| max_listing_items | — | `RUSTYFILE_MAX_LISTING_ITEMS` | `10000` | Max items returned in directory listing |
-| trusted_proxies | — | `RUSTYFILE_TRUSTED_PROXIES` | `""` | Comma-separated IPs for `X-Forwarded-For` |
-| tus_expiry_hours | — | `RUSTYFILE_TUS_EXPIRY_HOURS` | `24` | Hours before incomplete uploads are purged |
+| jwt_expiry_hours | `--jwt-expiry-hours` | `RUSTYFILE_JWT_EXPIRY_HOURS` | `2` | JWT token lifetime in hours |
+| min_password_length | `--min-password-length` | `RUSTYFILE_MIN_PASSWORD_LENGTH` | `10` | Minimum password length |
+| max_password_length | `--max-password-length` | `RUSTYFILE_MAX_PASSWORD_LENGTH` | `128` | Maximum password length (Argon2 DoS guard) |
+| setup_timeout_minutes | `--setup-timeout-minutes` | `RUSTYFILE_SETUP_TIMEOUT_MINUTES` | `5` | First-run setup window duration |
+| cors_origins | `--cors-origins` | `RUSTYFILE_CORS_ORIGINS` | `*` | Comma-separated allowed origins |
+| max_upload_bytes | `--max-upload-bytes` | `RUSTYFILE_MAX_UPLOAD_BYTES` | `52428800` | Non-TUS upload body limit (50 MB) |
+| max_listing_items | `--max-listing-items` | `RUSTYFILE_MAX_LISTING_ITEMS` | `10000` | Max items returned in directory listing |
+| trusted_proxies | `--trusted-proxies` | `RUSTYFILE_TRUSTED_PROXIES` | `""` | Comma-separated IPs for `X-Forwarded-For` |
+| tus_expiry_hours | `--tus-expiry-hours` | `RUSTYFILE_TUS_EXPIRY_HOURS` | `24` | Hours before incomplete uploads are purged |
+| secure_cookie | `--secure-cookie` | `RUSTYFILE_SECURE_COOKIE` | `true` | Set Secure flag on auth cookies (requires HTTPS) |
 
 ## Config file
 
 <Tabs>
   <TabItem label="config.toml">
     ```toml title="config.toml"
-    [rustyfile]
     host = "0.0.0.0"
     port = 8080
     root = "/srv/files"
@@ -49,6 +49,7 @@ Configuration is layered (highest priority first):
     log_format = "json"
     jwt_expiry_hours = 8
     cors_origins = "https://files.example.com"
+    secure_cookie = true
     ```
   </TabItem>
   <TabItem label="Environment">

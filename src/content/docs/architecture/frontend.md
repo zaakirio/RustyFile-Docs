@@ -19,9 +19,10 @@ description: React SPA structure — routing, state management, and component de
 
 ```
 /login          → LoginPage (also handles first-run setup)
-/browse/*       → BrowserPage (directory listing)
+/browse/*       → BrowserPage (directory listing + search)
 /edit/*         → EditorPage (text file editor)
 /play/*         → PlayerPage (video/audio player)
+/preview/*      → PreviewPage (image/document preview)
 ```
 
 All routes except `/login` are protected by an auth guard in `App.tsx`. Pages are loaded via `React.lazy` for code splitting.
@@ -33,6 +34,7 @@ No external state library. State is managed through:
 - **`useAuth`** — Auth context provider wrapping the app. Manages token, user, login/logout/refresh. Stores token in memory (not localStorage). A `rustyfile:auth-expired` custom window event triggers automatic logout.
 - **`useFiles`** — Directory listing, delete, and create-directory operations. Wraps the API client.
 - **`useTusUpload`** — Upload queue with concurrency control (max 3). Manages TUS lifecycle, progress tracking, and cancellation.
+- **`useSearch`** — Search with debounced input. Wraps the `/api/fs/search` endpoint with type/size/date filters.
 - **`useDragDrop`** — Drag-and-drop event handling. Falls back to file picker.
 
 ## API client

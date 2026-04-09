@@ -11,6 +11,7 @@ description: Essential checks before deploying RustyFile to production.
 - [ ] **TLS enabled** — always run behind a reverse proxy with HTTPS
 - [ ] **Trusted proxies configured** — set `RUSTYFILE_TRUSTED_PROXIES` to your proxy IPs so rate limiting uses real client IPs
 - [ ] **CORS restricted** — set `RUSTYFILE_CORS_ORIGINS` to your domain instead of `*`
+- [ ] **Secure cookies enabled** — `RUSTYFILE_SECURE_COOKIE=true` (default) requires HTTPS; set to `false` only for local development
 
 ### Storage
 

@@ -49,7 +49,7 @@ All responses return JSON with consistent structure:
 |-------|--------|---------------|-------------|
 | [Auth](/api/auth/) | `/api/auth/` | Varies | Login, logout, token refresh |
 | [Setup](/api/auth/) | `/api/setup/` | No | First-run admin creation |
-| [Filesystem](/api/filesystem/) | `/api/fs/` | Yes | Browse, create, edit, delete, download |
+| [Filesystem](/api/filesystem/) | `/api/fs/` | Yes | Browse, create, edit, delete, download, search |
 | [Uploads](/api/uploads/) | `/api/tus/` | Yes | TUS resumable upload protocol |
 | [Media](/api/media/) | `/api/thumbs/`, `/api/hls/` | Yes | Thumbnails, HLS streaming |
 | Health | `/api/health/` | No | Service health check |

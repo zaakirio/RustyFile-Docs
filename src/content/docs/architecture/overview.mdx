@@ -55,6 +55,7 @@ import { FileTree } from '@astrojs/starlight/components';
     - tus.rs — TUS 1.0 upload protocol
     - thumbs.rs — Image thumbnails
     - hls.rs — HLS playlist + segments
+    - search.rs — Full-text search endpoint
     - health.rs — Health check
     - middleware/
       - auth.rs — JWT validation middleware
@@ -66,17 +67,19 @@ import { FileTree } from '@astrojs/starlight/components';
     - cache.rs — Directory listing cache (moka)
     - thumbnail.rs — Image resize + disk cache
     - transcoder.rs — FFmpeg HLS transcoder
+    - search_index.rs — SQLite FTS5 search indexer
 - frontend/
   - src/
     - App.tsx — Router, auth guard
     - api/client.ts — Fetch wrapper, token management
-    - hooks/ — useAuth, useFiles, useTusUpload, useDragDrop
-    - pages/ — LoginPage, BrowserPage, EditorPage, PlayerPage
+    - hooks/ — useAuth, useFiles, useTusUpload, useDragDrop, useSearch
+    - pages/ — LoginPage, BrowserPage, EditorPage, PlayerPage, PreviewPage
     - components/ — Layout, FileList, UploadManager, VideoControls
     - lib/ — Types, path utils, formatting
 - migrations/
   - V1__initial_schema.sql
   - V2__tus_and_cache.sql
+  - V3__search_index.sql
 - Cargo.toml
 - Dockerfile
 - Makefile
@@ -101,3 +104,4 @@ All handlers share an `AppState` struct containing:
 - HLS source mapping (DashMap)
 - Thumbnail and HLS semaphores
 - Filesystem watcher handle
+- Search indexer (SearchIndexer)

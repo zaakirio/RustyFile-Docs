@@ -65,6 +65,16 @@ description: Deliberate design decisions, their rationale, and known limitations
 
 ---
 
+### Full reindex on startup over incremental-only
+
+**Choice:** The search index is fully rebuilt from the filesystem on every startup, with incremental updates while running.
+
+**Why:** Guarantees the index is always consistent with the actual filesystem, even if files were changed while the server was down.
+
+**Trade-off:** Startup time increases with the number of files. For very large filesystems (100k+ files), the initial index build can take several seconds. The 500ms debounce on filesystem events means very rapid changes may be batched.
+
+---
+
 ## Known limitations
 
 ### Single-user in practice
