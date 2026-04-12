@@ -15,7 +15,7 @@ Anyone who wants to browse and manage files on a remote server without SSH, SFTP
 
 ### Is it production-ready?
 
-RustyFile is functional and secure for personal/small-team use. It has path traversal prevention, rate-limited auth, atomic writes, and proper error handling. However, it currently lacks multi-user management and automated tests.
+RustyFile is functional and secure for personal/small-team use. It has path traversal prevention, rate-limited auth, token blocklisting, blocked upload extensions, atomic writes, integration tests, and proper error handling. Multi-user management (creating additional users beyond the initial admin) is not yet available.
 
 ---
 

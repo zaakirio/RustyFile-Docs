@@ -59,6 +59,7 @@ import { FileTree } from '@astrojs/starlight/components';
     - health.rs — Health check
     - middleware/
       - auth.rs — JWT validation middleware
+      - rate_limit.rs — Per-IP API rate limiting
   - db/
     - mod.rs — Pool, migrations, interact helper
     - user_repo.rs — User CRUD + password hashing
@@ -99,9 +100,15 @@ All handlers share an `AppState` struct containing:
 
 - SQLite connection pool
 - Canonical root path
-- Configuration values
+- Configuration values (Arc-wrapped)
+- JWT secret
 - Directory listing cache (moka)
-- HLS source mapping (DashMap)
-- Thumbnail and HLS semaphores
-- Filesystem watcher handle
+- HLS source mapping (moka cache)
+- Thumbnail worker and HLS transcoder
+- Login rate limiter (10 attempts / 15 min per IP)
+- API rate limiter (configurable, default 60/min per IP)
+- Token blocklist (moka cache)
+- Blocked upload extensions (pre-parsed HashSet)
 - Search indexer (SearchIndexer)
+- Setup guard (AtomicBool + deadline)
+- Dummy hash for constant-time login failure

@@ -29,12 +29,14 @@ Configuration is layered (highest priority first):
 | min_password_length | `--min-password-length` | `RUSTYFILE_MIN_PASSWORD_LENGTH` | `10` | Minimum password length |
 | max_password_length | `--max-password-length` | `RUSTYFILE_MAX_PASSWORD_LENGTH` | `128` | Maximum password length (Argon2 DoS guard) |
 | setup_timeout_minutes | `--setup-timeout-minutes` | `RUSTYFILE_SETUP_TIMEOUT_MINUTES` | `5` | First-run setup window duration |
-| cors_origins | `--cors-origins` | `RUSTYFILE_CORS_ORIGINS` | `*` | Comma-separated allowed origins |
+| cors_origins | `--cors-origins` | `RUSTYFILE_CORS_ORIGINS` | `same-origin` | Comma-separated allowed origins, or `*` for any |
 | max_upload_bytes | `--max-upload-bytes` | `RUSTYFILE_MAX_UPLOAD_BYTES` | `52428800` | Non-TUS upload body limit (50 MB) |
 | max_listing_items | `--max-listing-items` | `RUSTYFILE_MAX_LISTING_ITEMS` | `10000` | Max items returned in directory listing |
-| trusted_proxies | `--trusted-proxies` | `RUSTYFILE_TRUSTED_PROXIES` | `""` | Comma-separated IPs for `X-Forwarded-For` |
+| trusted_proxies | `--trusted-proxies` | `RUSTYFILE_TRUSTED_PROXIES` | `127.0.0.1` | Comma-separated IPs for `X-Forwarded-For` |
 | tus_expiry_hours | `--tus-expiry-hours` | `RUSTYFILE_TUS_EXPIRY_HOURS` | `24` | Hours before incomplete uploads are purged |
 | secure_cookie | `--secure-cookie` | `RUSTYFILE_SECURE_COOKIE` | `true` | Set Secure flag on auth cookies (requires HTTPS) |
+| blocked_upload_extensions | `--blocked-upload-extensions` | `RUSTYFILE_BLOCKED_UPLOAD_EXTENSIONS` | `.php,.sh,.exe,...` | Comma-separated blocked file extensions for uploads |
+| api_rate_limit | `--api-rate-limit` | `RUSTYFILE_API_RATE_LIMIT` | `60` | Max API requests per IP per minute (search, thumbnails, HLS) |
 
 ## Config file
 
@@ -63,7 +65,7 @@ Configuration is layered (highest priority first):
   </TabItem>
 </Tabs>
 
-Specify a config file path with `--config /path/to/config.toml`.
+Place the config file as `config.toml` in the working directory where RustyFile is launched.
 
 ## Directory layout
 

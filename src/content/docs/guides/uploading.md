@@ -27,6 +27,12 @@ RustyFile implements the **TUS 1.0** open protocol for resumable file uploads. I
 
 Expired incomplete uploads are automatically purged. On startup, any orphaned `.rustyfile_tmp_*` files are cleaned up.
 
+### Blocked file extensions
+
+Certain file extensions are blocked from upload by default to prevent uploading potentially dangerous files. The default blocklist includes: `.php`, `.phtml`, `.php5`, `.sh`, `.bash`, `.cgi`, `.pl`, `.py`, `.rb`, `.exe`, `.bat`, `.cmd`, `.ps1`, `.msi`, `.dll`, `.so`, `.com`, `.scr`, `.vbs`, `.vbe`, `.wsf`, `.wsh`, `.jar`.
+
+Customize the blocklist via `--blocked-upload-extensions` or `RUSTYFILE_BLOCKED_UPLOAD_EXTENSIONS` (comma-separated).
+
 ## Web UI upload
 
 ### Drag and drop

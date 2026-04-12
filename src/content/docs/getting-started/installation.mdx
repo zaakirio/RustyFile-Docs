@@ -15,13 +15,15 @@ import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
     |----------|-------------|----------|
     | Linux | x86_64 | `rustyfile-linux-amd64` |
     | Linux | ARM64 | `rustyfile-linux-arm64` |
-    | macOS | Intel | `rustyfile-darwin-amd64` |
-    | macOS | Apple Silicon | `rustyfile-darwin-arm64` |
 
     ```bash
     chmod +x rustyfile-linux-amd64
     mv rustyfile-linux-amd64 /usr/local/bin/rustyfile
     ```
+
+    :::note
+    Pre-built binaries are available for Linux only. For macOS, build from source.
+    :::
   </TabItem>
 
   <TabItem label="Docker" icon="seti:docker">
@@ -41,7 +43,7 @@ import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
       rustyfile:
         image: rustyfile/rustyfile
         ports:
-          - "8080:8080"
+          - "8080:80"
         volumes:
           - /your/files:/data
           - rustyfile-config:/config

@@ -7,18 +7,23 @@ description: Deep dive into the Rust backend — modules, patterns, and design d
 
 ### API layer (`src/api/`)
 
-The router is assembled in `api/mod.rs` with a layered middleware stack:
+The router is assembled in `api/mod.rs` with a layered middleware stack (outermost first):
 
 ```
 Request
+  → Security headers (CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy, Permissions-Policy)
+  → Body limit (max_upload_bytes)
+  → Timeout (30 seconds)
   → CORS
   → Compression (gzip + brotli)
-  → Security headers (CSP, X-Content-Type-Options, X-Frame-Options)
   → Request tracing (trace_layer)
-  → Timeout (30 seconds)
-  → Body limit (max_upload_bytes)
   → Route handler
 ```
+
+Certain route groups have additional per-route middleware:
+- **Search, thumbnails, HLS** — per-IP API rate limiting (configurable, default 60 req/min)
+- **TUS uploads** — separate body limit
+- **Protected routes** — JWT auth middleware
 
 Each handler module owns its routes and is mounted on the appropriate prefix.
 
@@ -26,10 +31,10 @@ Each handler module owns its routes and is mounted on the appropriate prefix.
 
 Business logic lives here, separate from HTTP concerns:
 
-- **file_ops** — `safe_resolve` for path validation, `list_directory`, `file_info`, `read_text_content`, `atomic_write`, `delete_entry`, `rename_entry`, `detect_subtitles`
+- **file_ops** — `safe_resolve` for path validation, `list_directory`, `file_info`, `read_text_content`, `atomic_write`, `delete_entry`, `rename_entry`, `detect_subtitles`, `check_blocked_extension` for upload safety
 - **cache** — `DirCache` wrapper around moka's async cache with filesystem watcher integration
-- **thumbnail** — Decode, resize (Lanczos3 via fast_image_resize), encode to JPEG, disk-cache
-- **transcoder** — FFmpeg subprocess management, segment generation, disk caching
+- **thumbnail** — Decode, resize (Lanczos3 via fast_image_resize), encode to JPEG, disk-cache. Semaphore-limited to 4 concurrent generations
+- **transcoder** — FFmpeg subprocess management, segment generation, disk caching. Max 2 concurrent processes
 - **search_index** — SQLite FTS5-backed full-text filename search. Full reindex on startup, incremental updates via filesystem watcher notifications. Supports type/size/date filtering and path scoping
 
 ### Database layer (`src/db/`)

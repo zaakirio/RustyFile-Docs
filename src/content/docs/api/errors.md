@@ -24,7 +24,7 @@ Internal errors (500) return a generic message to prevent information leakage. T
 | `409` | Conflict | File already exists (rename without `overwrite`), TUS offset mismatch |
 | `410` | Gone | Setup window has expired |
 | `428` | Precondition Required | Setup must be completed before this operation |
-| `429` | Too Many Requests | Login rate limit exceeded (10 per 15 min per IP) |
+| `429` | Too Many Requests | Rate limit exceeded — login (10 per 15 min per IP) or API endpoints (search, thumbnails, HLS — default 60 per min per IP) |
 | `500` | Internal Server Error | Database, I/O, or unexpected error (details logged, not returned) |
 
 ## Common scenarios

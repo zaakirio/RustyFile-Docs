@@ -27,10 +27,11 @@ curl -X POST http://localhost:8080/api/auth/login \
   -d '{"username": "admin", "password": "your-password"}'
 ```
 
+The JWT token is set as an `HttpOnly` cookie (`rustyfile_token`) via the `Set-Cookie` header.
+
 Response:
 ```json
 {
-  "token": "eyJhbGci...",
   "user": { "id": 1, "username": "admin", "role": "admin" }
 }
 ```
@@ -65,15 +66,19 @@ The refresh endpoint re-validates the user exists in the database before issuing
 | Measure | Description |
 |---------|-------------|
 | **Argon2id hashing** | Industry-standard password hashing, resistant to GPU/ASIC attacks |
+| **Max password length** | Capped at 128 characters (configurable) to prevent Argon2 DoS attacks |
 | **Rate limiting** | 10 login attempts per 15 minutes per IP (leaky bucket via `governor`) |
+| **API rate limiting** | Expensive endpoints (search, thumbnails, HLS) are rate-limited per IP (default 60/min) |
 | **Constant-time failure** | Failed logins verify against a dummy hash to prevent username enumeration via timing |
 | **HttpOnly cookies** | Tokens are not accessible to JavaScript, preventing XSS token theft |
+| **Token blocklist** | Logged-out and refreshed tokens are added to an in-memory blocklist, preventing reuse |
 | **JWT secret** | Generated randomly at first run, stored in SQLite — unique per installation |
 
 ## Logout
 
 ```bash
-curl -X POST http://localhost:8080/api/auth/logout
+curl -X POST http://localhost:8080/api/auth/logout \
+  -H "Authorization: Bearer eyJhbGci..."
 ```
 
-Clears the `rustyfile_token` cookie. No authentication required.
+Clears the `rustyfile_token` cookie. If a token is provided, it is added to the in-memory blocklist to prevent reuse.

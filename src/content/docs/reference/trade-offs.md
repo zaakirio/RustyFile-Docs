@@ -57,11 +57,11 @@ description: Deliberate design decisions, their rationale, and known limitations
 
 ### JWT tokens over sessions
 
-**Choice:** Stateless JWT (HS256) over server-side session storage.
+**Choice:** Stateless JWT (HS256) over server-side session storage, with an in-memory token blocklist.
 
-**Why:** No session table to manage, no server-side state to clean up. Token validation is a cheap crypto operation. Works well for a single-instance server.
+**Why:** No session table to manage, minimal server-side state. Token validation is a cheap crypto operation. Works well for a single-instance server. Logout and refresh add the old token to an in-memory blocklist (moka cache with TTL matching token expiry).
 
-**Trade-off:** Tokens can't be revoked before expiry (no token blacklist). If a token is stolen, it's valid until it expires. Mitigated by short expiry (2 hours default) and HttpOnly cookies.
+**Trade-off:** The blocklist is in-memory only — a server restart clears it, making previously-blocklisted tokens valid again until they expire naturally. Mitigated by short expiry (2 hours default) and HttpOnly cookies.
 
 ---
 

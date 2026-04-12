@@ -66,7 +66,7 @@ RustyFile does not terminate TLS itself. Use a reverse proxy for HTTPS in produc
           - "traefik.http.routers.rustyfile.rule=Host(`files.example.com`)"
           - "traefik.http.routers.rustyfile.tls=true"
           - "traefik.http.routers.rustyfile.tls.certresolver=letsencrypt"
-          - "traefik.http.services.rustyfile.loadbalancer.server.port=8080"
+          - "traefik.http.services.rustyfile.loadbalancer.server.port=80"
         volumes:
           - /your/files:/data
           - rustyfile-config:/config
@@ -79,11 +79,10 @@ RustyFile does not terminate TLS itself. Use a reverse proxy for HTTPS in produc
 
 ## Trusted proxies
 
-By default, RustyFile trusts all `X-Forwarded-For` headers. In production, restrict to your proxy's IP:
+By default, RustyFile trusts `X-Forwarded-For` headers from `127.0.0.1` only. If your proxy runs on a different IP, add it:
 
 ```bash
-rustyfile --root /data \
-  RUSTYFILE_TRUSTED_PROXIES="127.0.0.1,10.0.0.1"
+RUSTYFILE_TRUSTED_PROXIES="127.0.0.1,10.0.0.1"
 ```
 
 This ensures the rate limiter and logging use the real client IP, not the proxy's.
@@ -96,4 +95,4 @@ If the frontend is served from a different origin (e.g., during development), co
 RUSTYFILE_CORS_ORIGINS="https://files.example.com,http://localhost:5173"
 ```
 
-Default is `*` (allow all origins).
+Default is `same-origin` (no cross-origin requests). Use `*` to allow all origins (not recommended for production).

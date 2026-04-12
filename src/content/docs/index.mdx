@@ -34,7 +34,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
     TUS 1.0 protocol support means large uploads survive network interruptions. Drag-and-drop with concurrent upload queues.
   </Card>
   <Card title="Secure by Default" icon="approve-check-circle">
-    Path traversal prevention, JWT + Argon2id auth, rate-limited login, constant-time password checks, CSP headers, and atomic file writes.
+    Path traversal prevention, JWT + Argon2id auth, rate-limited login, token blocklisting, blocked upload extensions, constant-time password checks, CSP headers, and atomic file writes.
   </Card>
   <Card title="Full-Text Search" icon="magnifier">
     Find files instantly with SQLite FTS5-powered search. Filter by type, size, date, and path. Index stays in sync via filesystem watcher.

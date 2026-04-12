@@ -10,8 +10,10 @@ description: Essential checks before deploying RustyFile to production.
 - [ ] **Strong admin password** — minimum 10 characters, use a password manager
 - [ ] **TLS enabled** — always run behind a reverse proxy with HTTPS
 - [ ] **Trusted proxies configured** — set `RUSTYFILE_TRUSTED_PROXIES` to your proxy IPs so rate limiting uses real client IPs
-- [ ] **CORS restricted** — set `RUSTYFILE_CORS_ORIGINS` to your domain instead of `*`
+- [ ] **CORS restricted** — set `RUSTYFILE_CORS_ORIGINS` to your domain (default is `same-origin`)
 - [ ] **Secure cookies enabled** — `RUSTYFILE_SECURE_COOKIE=true` (default) requires HTTPS; set to `false` only for local development
+- [ ] **Blocked extensions reviewed** — `RUSTYFILE_BLOCKED_UPLOAD_EXTENSIONS` blocks dangerous file types by default (`.php`, `.exe`, `.sh`, etc.); customize if needed
+- [ ] **API rate limit tuned** — `RUSTYFILE_API_RATE_LIMIT` (default 60/min per IP) protects search, thumbnail, and HLS endpoints
 
 ### Storage
 

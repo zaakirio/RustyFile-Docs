@@ -37,15 +37,14 @@ Creates the initial admin user. Only available during the setup window (default 
 }
 ```
 
-**Response** `200`:
+**Response** `201`:
 ```json
 {
-  "token": "eyJhbGci...",
   "user": { "id": 1, "username": "admin", "role": "admin" }
 }
 ```
 
-Also sets `rustyfile_token` HttpOnly cookie.
+The JWT token is set via a `Set-Cookie` header as an `HttpOnly` cookie (`rustyfile_token`).
 
 **Errors:**
 - `400` — Validation error (password mismatch, too short/long)
@@ -75,10 +74,11 @@ Authenticate and receive a JWT token. **No auth required.** Rate-limited: 10 att
 **Response** `200`:
 ```json
 {
-  "token": "eyJhbGci...",
   "user": { "id": 1, "username": "admin", "role": "admin" }
 }
 ```
+
+The JWT token is set via the `Set-Cookie` header as an `HttpOnly` cookie.
 
 **Errors:**
 - `401` — Invalid credentials
@@ -92,7 +92,7 @@ Authenticate and receive a JWT token. **No auth required.** Rate-limited: 10 att
 POST /api/auth/logout
 ```
 
-Clears the `rustyfile_token` cookie. **No auth required.**
+Clears the `rustyfile_token` cookie. If a token is provided, it is added to an in-memory blocklist to prevent reuse. **No auth required.**
 
 **Response** `200`:
 ```json
@@ -107,12 +107,16 @@ Clears the `rustyfile_token` cookie. **No auth required.**
 POST /api/auth/refresh
 ```
 
-Issue a new JWT token. **Requires auth.** Re-validates the user exists in the database before issuing.
+Issue a new JWT token. **Requires auth.** Re-validates the user exists in the database before issuing. The old token is added to the blocklist.
 
 **Response** `200`:
 ```json
-{ "token": "eyJhbGci..." }
+{
+  "user": { "id": 1, "username": "admin", "role": "admin" }
+}
 ```
+
+The new JWT token is set via the `Set-Cookie` header as an `HttpOnly` cookie.
 
 **Errors:**
 - `401` — Token invalid/expired or user no longer exists
